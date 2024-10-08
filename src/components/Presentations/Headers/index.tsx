@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { EpicLogo, PureImage } from "@/components/Commons/Logos";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { ConnectBtn } from "@/components/Commons/Buttons/ConnectButton";
 
 const Headers = () => {
   const router = usePathname();
@@ -64,11 +65,7 @@ const Headers = () => {
           </div>
           <div style={{ flex: 1 }}>
             <div className="flex gap-6 items-center">
-              <PureImage url="/btn/BTN-BASE-ICO.svg" style={{ width: 75 }} />
-              <PureImage
-                url="/btn/BTN-CONNECT-WALLET.svg"
-                style={{ width: 175 }}
-              />
+              <ConnectBtn />
             </div>
           </div>
         </div>

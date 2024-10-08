@@ -1,0 +1,12 @@
+# Use the official IPFS image from Docker Hub
+FROM ipfs/go-ipfs:latest
+
+# Expose necessary ports
+EXPOSE 4001 5001 8080
+
+# You can add custom configurations or environment variables here
+# For example:
+# ENV IPFS_PATH=/data/ipfs
+
+# Default command to run IPFS
+CMD ["daemon", "--migrate=true"]

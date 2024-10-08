@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  ipfs-node:
+    image: ipfs/go-ipfs:latest
+    container_name: ipfs_host
+    volumes:
+      - ./ipfs_data:/data/ipfs
+      - ./ipfs_staging:/export
+    ports:
+      - "4001:4001" # P2P port
+      - "5001:5001" # API port
+      - "8080:8080" # Gateway port
+    # environment:
+      # Custom environment variables can be defined here if needed
+      # IPFS_PATH: /data/ipfs
+    restart: unless-stopped
+    command: daemon --migrate=true
+
+# IPFS Web UI: http://localhost:5001/webui
+# IPFS API: http://localhost:5001/api/v0
+# IPFS Gateway: http://localhost:8080

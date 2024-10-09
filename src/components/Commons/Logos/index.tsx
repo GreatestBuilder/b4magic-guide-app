@@ -22,7 +22,7 @@ const PureImage: React.FC<ILogoProps> = ({ url, mode, className, style }) => {
         height: "100%",
         maxHeight: "100%",
         maxWidth: "100%",
-        objectFit: mode || "contain",
+        objectFit: mode ?? "contain",
         ...style,
       }}
       alt={`${url}`}

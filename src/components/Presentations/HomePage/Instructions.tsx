@@ -2,6 +2,12 @@ import React, { useState } from "react";
 import { ArrowLine } from "@/components/Commons";
 import { Button } from "@/components/Commons/Buttons";
 import { PureImage } from "@/components/Commons/Logos";
+import { useReadContract } from "wagmi";
+import { ethers } from "ethers";
+import { ContractAddress } from "@/lib/config";
+
+import abi from "../../../components/ABI/abi.json";
+import axios from "axios";
 
 interface IInstructionProps {
   onUpdate: (value: boolean) => void;
@@ -10,13 +16,73 @@ interface IInstructionProps {
 const Instruction = (props: IInstructionProps) => {
   const { onUpdate } = props;
   const [isCollapse, setIsCollapse] = useState(false);
+  const test = useReadContract;
 
   const onChange = () => {
     setIsCollapse((prev) => !prev);
   };
 
-  const onGo = () => {
-    onUpdate(true);
+  const onGo = async () => {
+    // onUpdate(true);
+
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.BrowserProvider(ethereum);
+        const signer = await provider.getSigner();
+        const nftContract = new ethers.Contract(ContractAddress, abi, signer);
+
+        let nftTx = await nftContract.mintNFT(
+          "QmUN9EQoBhmB8h3Eso613CupwJ3fiVvEzqmHBLNQm4ZArM"
+        );
+        console.log("Mining....", nftTx.hash);
+
+        let tx = await nftTx.wait();
+        console.log("Mined!", tx);
+        let event = tx?.iface?.events[3];
+        let value = event.args[0];
+        let tokenId = value.toNumber();
+
+        console.log("====================================");
+        console.log({ tokenId });
+        console.log("====================================");
+        getMintedNFT(tokenId);
+
+        console.log("nftTx.hash", nftTx.hash);
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+      console.log("Error minting character", error);
+    }
+  };
+
+  const getMintedNFT = async (tokenId: string) => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.BrowserProvider(ethereum);
+        const signer = await provider.getSigner();
+        const nftContract = new ethers.Contract(ContractAddress, abi, signer);
+        let tokenUri = await nftContract.tokenURI(tokenId);
+
+        console.log("====================================");
+        console.log({ tokenUri });
+        console.log("====================================");
+        let data = await axios.get(tokenUri);
+        let meta = data.data;
+
+        console.log("====================================");
+        console.log({ meta });
+        console.log("====================================");
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

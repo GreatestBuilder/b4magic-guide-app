@@ -25,3 +25,5 @@ export const config = getDefaultConfig({
     {}
   ),
 });
+
+export const ContractAddress = "0x267114d10E445be5A81C99c42A60CA2E7c5bAeBc";

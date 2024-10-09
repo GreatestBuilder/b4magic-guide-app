@@ -15,6 +15,7 @@
     "csv-parser": "^3.0.0",
     "dotenv": "^16.4.5",
     "encoding": "^0.1.13",
+    "ethers": "^6.13.3",
     "form-data": "^4.0.0",
     "fs": "0.0.1-security",
     "modules": "link:@nomicfoundation/hardhat-ignition/modules",

@@ -10,4 +10,5 @@ Welcome to the forefront of Web3/Frontend development, where we embark on a tran
 Here is the link to [the article](https://medium.com/@danmugh/integrating-wagmi-v2-and-rainbowkit-in-nextjs-a-comprehensive-guide-part-1-3fc271879075)
 
 ## Triger build
-- Build v1
+- Build v1.1.0
+- Build v1.1.1

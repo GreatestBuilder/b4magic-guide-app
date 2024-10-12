@@ -4,7 +4,6 @@ import PopupModal from "./PopupModal";
 import { NftMetadata } from "@/lib/interface";
 
 const HomePage = () => {
-  const [isSwitchModal, setIsSwitchModal] = useState(false);
   const [mintInfos, setMintInfos] = useState<null | NftMetadata>(null);
 
   return (

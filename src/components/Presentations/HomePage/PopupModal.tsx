@@ -44,8 +44,10 @@ const PopupModal = (props: IPopupModalProps) => {
           <div className="bg-popup-frame"></div>
           <div className="absolute inset-0 flex justify-center items-center z-10 p-4">
             <div className="text-center">
-              <h1 className="text-3xl mb-2">{mintInfos?.name}</h1>
-              <p>{mintInfos?.description}</p>
+              <h1 className="text-3xl mb-2" style={{ color: "white" }}>
+                {mintInfos?.name}
+              </h1>
+              <p style={{ color: "white" }}>{mintInfos?.description}</p>
             </div>
           </div>
         </div>

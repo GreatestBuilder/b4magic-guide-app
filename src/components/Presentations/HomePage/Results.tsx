@@ -103,7 +103,7 @@ const Results = (props: IResultsProps) => {
                 <ArrowLine />
               </div>
             </div>
-            <div>
+            <div style={{ color: "white" }}>
               The way you ask the question and the level of focus will determine
               the accuracy of the message. The question should be specific, in
               yes-no or multiple-choice format. If you want more guidance,

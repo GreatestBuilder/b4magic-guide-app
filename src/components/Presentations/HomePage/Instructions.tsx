@@ -16,6 +16,8 @@ const Instruction = (props: IInstructionProps) => {
   const { onMintNft, isMinting } = useConnectContract();
   const [isCollapse, setIsCollapse] = useState(false);
 
+  const [txtInput, setTxtInput] = useState<null | string>(null);
+
   const onChange = () => {
     setIsCollapse((prev) => !prev);
   };
@@ -28,6 +30,10 @@ const Instruction = (props: IInstructionProps) => {
     if (quoteInfos?.name || quoteInfos?.description) {
       onUpdate(quoteInfos);
     }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setTxtInput(e.target.value);
   };
 
   return (
@@ -91,6 +97,7 @@ const Instruction = (props: IInstructionProps) => {
               </div>
             </div>
             <textarea
+              onChange={handleChange}
               className="h-full w-full text-primary-color"
               style={{
                 backgroundColor: "transparent",
@@ -105,7 +112,7 @@ const Instruction = (props: IInstructionProps) => {
         <div className="flex items-center justify-center">
           <button
             className="relative h-12 w-[200px] cursor-pointer"
-            onClick={onGo}
+            onClick={txtInput ? () => onGo() : () => null}
           >
             <PureImage
               style={{

@@ -2,7 +2,7 @@
 import Intro from "./Intro";
 import HomePage from "../HomePage";
 import { useEffect, useMemo, useState } from "react";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import useLocalStorage from "@/hooks/common/useLocalStorage";
 
 const OpeningUI = () => {
   const [isItro, setIsItro] = useState(true);

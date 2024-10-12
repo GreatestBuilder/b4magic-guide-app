@@ -1,17 +1,19 @@
 import { ArrowLine } from "@/components/Commons";
 import { PureImage } from "@/components/Commons/Logos";
+import { NftMetadata } from "@/lib/interface";
 
 interface IResultsProps {
   onChange: () => void;
+  mintInfos: NftMetadata | null;
 }
 
 const Results = (props: IResultsProps) => {
-  const { onChange } = props;
+  const { onChange, mintInfos } = props;
   return (
     <div>
       <div className="grid grid-cols-3 gap-10">
         <div className="flex justify-end ">
-          <div
+          <button
             className="relative h-12 w-[200px] cursor-pointer"
             onClick={onChange}
           >
@@ -23,7 +25,7 @@ const Results = (props: IResultsProps) => {
               url="/btn/BTN-FRAME.svg"
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 ">
                 <div className="text-nowrap text-primary-color">Create new</div>
                 <PureImage
                   style={{
@@ -34,17 +36,11 @@ const Results = (props: IResultsProps) => {
                 />
               </div>
             </div>
-          </div>
+          </button>
         </div>
         <div className="mt-[-30px]">
           <div className="relative">
-            <PureImage url="/frame/MAGIC_FRAME.svg" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div>
-                <div className="text-6xl text-center">Up</div>
-                <div className="text-6xl text-center">trend </div>
-              </div>
-            </div>
+            <PureImage url={mintInfos?.image} />
           </div>
         </div>
         <div>

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const getWindowDimensions = () => {
   if (typeof window !== "undefined") {
@@ -25,8 +25,6 @@ export const useWindowDimensions = () => {
 
   return windowDimensions;
 };
-
-import { useEffect } from "react";
 
 export const useEventListener_v2 = (
   target: EventTarget | undefined,

@@ -1,87 +1,32 @@
-import React, { useState } from "react";
 import { ArrowLine } from "@/components/Commons";
 import { Button } from "@/components/Commons/Buttons";
 import { PureImage } from "@/components/Commons/Logos";
-import { useReadContract } from "wagmi";
-import { ethers } from "ethers";
-import { ContractAddress } from "@/lib/config";
+import { useState } from "react";
 
-import abi from "../../../components/ABI/abi.json";
-import axios from "axios";
+import { useConnectContract } from "@/hooks/blockChain/useConnect";
+import { NftMetadata } from "@/lib/interface";
 
 interface IInstructionProps {
-  onUpdate: (value: boolean) => void;
+  onUpdate: (value: NftMetadata) => void;
 }
 
 const Instruction = (props: IInstructionProps) => {
   const { onUpdate } = props;
+
+  const { onMintNft, isMinting } = useConnectContract();
   const [isCollapse, setIsCollapse] = useState(false);
-  const test = useReadContract;
 
   const onChange = () => {
     setIsCollapse((prev) => !prev);
   };
 
   const onGo = async () => {
-    // onUpdate(true);
-
-    try {
-      const { ethereum } = window;
-
-      if (ethereum) {
-        const provider = new ethers.BrowserProvider(ethereum);
-        const signer = await provider.getSigner();
-        const nftContract = new ethers.Contract(ContractAddress, abi, signer);
-
-        let nftTx = await nftContract.mintNFT(
-          "QmUN9EQoBhmB8h3Eso613CupwJ3fiVvEzqmHBLNQm4ZArM"
-        );
-        console.log("Mining....", nftTx.hash);
-
-        let tx = await nftTx.wait();
-        console.log("Mined!", tx);
-        let event = tx?.iface?.events[3];
-        let value = event.args[0];
-        let tokenId = value.toNumber();
-
-        console.log("====================================");
-        console.log({ tokenId });
-        console.log("====================================");
-        getMintedNFT(tokenId);
-
-        console.log("nftTx.hash", nftTx.hash);
-      } else {
-        console.log("Ethereum object doesn't exist!");
-      }
-    } catch (error) {
-      console.log("Error minting character", error);
-    }
-  };
-
-  const getMintedNFT = async (tokenId: string) => {
-    try {
-      const { ethereum } = window;
-
-      if (ethereum) {
-        const provider = new ethers.BrowserProvider(ethereum);
-        const signer = await provider.getSigner();
-        const nftContract = new ethers.Contract(ContractAddress, abi, signer);
-        let tokenUri = await nftContract.tokenURI(tokenId);
-
-        console.log("====================================");
-        console.log({ tokenUri });
-        console.log("====================================");
-        let data = await axios.get(tokenUri);
-        let meta = data.data;
-
-        console.log("====================================");
-        console.log({ meta });
-        console.log("====================================");
-      } else {
-        console.log("Ethereum object doesn't exist!");
-      }
-    } catch (error) {
-      console.log(error);
+    const quoteInfos = await onMintNft();
+    console.log("====================================");
+    console.log({ quoteInfos });
+    console.log("====================================");
+    if (quoteInfos?.name || quoteInfos?.description) {
+      onUpdate(quoteInfos);
     }
   };
 
@@ -111,6 +56,7 @@ const Instruction = (props: IInstructionProps) => {
             height: isCollapse ? "0px" : "100%",
             transition: "all .1s ease",
             overflow: "hidden",
+            color: "white",
           }}
         >
           <p className="highlight-bg border-b border-b-primary-color mb-5">
@@ -131,7 +77,7 @@ const Instruction = (props: IInstructionProps) => {
         </div>
         <div className="mt-10">
           <div
-            className="h-56 w-full"
+            className="h-60 w-full overflow-hidden"
             style={{
               border: "1px solid #f2da85",
               borderRadius: 10,
@@ -157,10 +103,39 @@ const Instruction = (props: IInstructionProps) => {
       </div>
       <div className="mt-10">
         <div className="flex items-center justify-center">
-          <Button
+          <button
+            className="relative h-12 w-[200px] cursor-pointer"
             onClick={onGo}
-            text={<PureImage style={{ width: 200 }} url="/btn/GO.svg" />}
-          />
+          >
+            <PureImage
+              style={{
+                width: "100%",
+                maxWidth: 200,
+              }}
+              url="/btn/BTN-FRAME.svg"
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              {isMinting ? (
+                <div className="text-nowrap text-primary-color uppercase text-xl">
+                  loading ...
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <div className="text-nowrap text-primary-color uppercase text-xl">
+                    go
+                  </div>
+                  <PureImage
+                    style={{
+                      width: "100%",
+                      maxWidth: 20,
+                      transform: "rotate(-90deg)",
+                    }}
+                    url="/btn/ARROW.svg"
+                  />
+                </div>
+              )}
+            </div>
+          </button>
         </div>
       </div>
       <div className="mt-10 mx-auto max-w-[525px]">
@@ -176,7 +151,7 @@ const Instruction = (props: IInstructionProps) => {
               }}
               url="/btn/RECTANGLE.svg"
             />
-            <div>
+            <div style={{ color: "white" }}>
               Your question must be related to future results, not known
               results.
             </div>
@@ -188,7 +163,7 @@ const Instruction = (props: IInstructionProps) => {
               }}
               url="/btn/RECTANGLE.svg"
             />
-            <div>
+            <div style={{ color: "white" }}>
               Your question must be about yourself; don’t ask about others.
             </div>
           </div>

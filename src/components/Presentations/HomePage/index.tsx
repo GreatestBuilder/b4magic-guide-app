@@ -1,9 +1,11 @@
 import { useState } from "react";
 import Instruction from "./Instructions";
 import PopupModal from "./PopupModal";
+import { NftMetadata } from "@/lib/interface";
 
 const HomePage = () => {
   const [isSwitchModal, setIsSwitchModal] = useState(false);
+  const [mintInfos, setMintInfos] = useState<null | NftMetadata>(null);
 
   return (
     <section style={{ position: "relative", zIndex: 2 }}>
@@ -14,10 +16,10 @@ const HomePage = () => {
           paddingBottom: 80,
         }}
       >
-        {isSwitchModal ? (
-          <PopupModal onUpdate={setIsSwitchModal} />
+        {mintInfos ? (
+          <PopupModal onUpdate={setMintInfos} mintInfos={mintInfos} />
         ) : (
-          <Instruction onUpdate={setIsSwitchModal} />
+          <Instruction onUpdate={setMintInfos} />
         )}
       </div>
     </section>

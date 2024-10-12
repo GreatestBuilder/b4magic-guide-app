@@ -8,3 +8,7 @@ export const middleEllipsis = (
     ? `${str.slice(0, len)}${symbol}${str.slice(str.length - len)}`
     : str;
 };
+
+export const turnRandomNumberFromRange = (min: number, max: number) => {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};

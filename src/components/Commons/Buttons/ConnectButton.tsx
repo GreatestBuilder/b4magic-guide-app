@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { emojiAvatarForAddress } from "@/lib/emojiAvatarForAddress";
+import { middleEllipsis } from "@/lib/utils";
 import {
-  useConnectModal,
   useAccountModal,
   useChainModal,
+  useConnectModal,
 } from "@rainbow-me/rainbowkit";
-import { useAccount, useDisconnect } from "wagmi";
-import { emojiAvatarForAddress } from "@/lib/emojiAvatarForAddress";
+import { useEffect, useRef } from "react";
+import { useAccount } from "wagmi";
 import { PureImage } from "../Logos";
-import { middleEllipsis } from "@/lib/utils";
 
 export const ConnectBtn = () => {
   const { isConnecting, address, isConnected, chain } = useAccount();
@@ -20,7 +20,6 @@ export const ConnectBtn = () => {
   const { openConnectModal } = useConnectModal();
   const { openAccountModal } = useAccountModal();
   const { openChainModal } = useChainModal();
-  const { disconnect } = useDisconnect();
 
   const isMounted = useRef(false);
 
@@ -30,16 +29,7 @@ export const ConnectBtn = () => {
 
   if (!isConnected) {
     return (
-      <button
-        onClick={async () => {
-          // Disconnecting wallet first because sometimes when is connected but the user is not connected
-          if (isConnected) {
-            disconnect();
-          }
-          openConnectModal?.();
-        }}
-        disabled={isConnecting}
-      >
+      <button onClick={openConnectModal} disabled={isConnecting}>
         <div className="relative h-12 w-[200px] cursor-pointer">
           <PureImage
             style={{

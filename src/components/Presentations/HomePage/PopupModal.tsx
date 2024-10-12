@@ -1,13 +1,15 @@
 import { PureImage } from "@/components/Commons/Logos";
 import React, { useEffect, useState } from "react";
 import Results from "./Results";
+import { NftMetadata } from "@/lib/interface";
 
 interface IPopupModalProps {
-  onUpdate: (value: boolean) => void;
+  onUpdate: (value: NftMetadata | null) => void;
+  mintInfos: NftMetadata | null;
 }
 
 const PopupModal = (props: IPopupModalProps) => {
-  const { onUpdate } = props;
+  const { onUpdate, mintInfos } = props;
   const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
@@ -20,13 +22,13 @@ const PopupModal = (props: IPopupModalProps) => {
   }, []);
 
   const onCreate = () => {
-    onUpdate(false);
+    onUpdate(null);
   };
 
   return (
     <div className="flex items-center justify-center h-full">
       {isSuccess ? (
-        <Results onChange={onCreate} />
+        <Results onChange={onCreate} mintInfos={mintInfos} />
       ) : (
         <div className="relative">
           <PureImage
@@ -42,12 +44,8 @@ const PopupModal = (props: IPopupModalProps) => {
           <div className="bg-popup-frame"></div>
           <div className="absolute inset-0 flex justify-center items-center z-10 p-4">
             <div className="text-center">
-              A Game. <br /> A prophecy. <br /> Or a message from the universe.{" "}
-              <br /> Whatever you see in this book, you should believe before
-              you ask. <br /> And you should only seek answers, if you truly
-              believe or want to believe. If you are confused by the choices, if
-              you are indecisive, if you do not know what to do next : ask a
-              question. And let the gods decide for you.
+              <h1 className="text-3xl mb-2">{mintInfos?.name}</h1>
+              <p>{mintInfos?.description}</p>
             </div>
           </div>
         </div>

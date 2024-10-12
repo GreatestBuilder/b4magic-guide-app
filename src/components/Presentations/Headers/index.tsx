@@ -1,10 +1,10 @@
 "use client";
+import { ConnectBtn } from "@/components/Commons/Buttons/ConnectButton";
+import { EpicLogo, PureImage } from "@/components/Commons/Logos";
+import useLocalStorage from "@/hooks/common/useLocalStorage";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { EpicLogo, PureImage } from "@/components/Commons/Logos";
-import useLocalStorage from "@/hooks/useLocalStorage";
-import { ConnectBtn } from "@/components/Commons/Buttons/ConnectButton";
+import { useMemo } from "react";
 
 const Headers = () => {
   const router = usePathname();

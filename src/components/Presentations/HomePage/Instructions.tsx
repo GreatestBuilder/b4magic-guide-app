@@ -5,6 +5,8 @@ import { useState } from "react";
 
 import { useConnectContract } from "@/hooks/blockChain/useConnect";
 import { NftMetadata } from "@/lib/interface";
+import { useAccount } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 interface IInstructionProps {
   onUpdate: (value: NftMetadata) => void;
@@ -14,6 +16,9 @@ const Instruction = (props: IInstructionProps) => {
   const { onUpdate } = props;
 
   const { onMintNft, isMinting } = useConnectContract();
+  const { isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
+
   const [isCollapse, setIsCollapse] = useState(false);
 
   const [txtInput, setTxtInput] = useState<null | string>(null);
@@ -23,6 +28,10 @@ const Instruction = (props: IInstructionProps) => {
   };
 
   const onGo = async () => {
+    if (!isConnected) {
+      openConnectModal?.();
+      return;
+    }
     const quoteInfos = await onMintNft();
     console.log("====================================");
     console.log({ quoteInfos });

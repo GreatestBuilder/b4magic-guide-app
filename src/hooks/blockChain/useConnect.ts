@@ -5,12 +5,18 @@ import { ContractAddress } from "@/lib/config";
 import { turnRandomNumberFromRange } from "@/lib/utils";
 import { useState } from "react";
 import axios from "axios";
+import { useAccount } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 const defaultUrl =
   "https://ipfs.io/ipfs/QmPw1ogeGvyrXRQNK8WD4WNTxsuwjvVsaKkmHP6HWQzrZm";
 
 const useConnectContract = () => {
   const [isMinting, setIsMinting] = useState<null | boolean>(null);
+
+  const { isConnected, address } = useAccount();
+
+  const { openConnectModal } = useConnectModal();
 
   const onMintNft = async () => {
     try {
@@ -45,6 +51,29 @@ const useConnectContract = () => {
       console.log("Error minting character", error);
       setIsMinting(false);
       return null;
+    }
+  };
+
+  const getNFTbyOwner = async () => {
+    try {
+      if (!isConnected) {
+        openConnectModal?.();
+        return;
+      }
+
+      console.log("====================================");
+      console.log({ address });
+      console.log("====================================");
+      const { ethereum } = window;
+      if (ethereum) {
+        const provider = new ethers.BrowserProvider(ethereum);
+        const nftContract = new ethers.Contract(ContractAddress, abi, provider);
+        return await nftContract.getNFTsByOwner(address);
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -97,7 +126,7 @@ const useConnectContract = () => {
     }
   };
 
-  return { onMintNft, isMinting, setIsMinting, getMintedNFT };
+  return { onMintNft, isMinting, setIsMinting, getMintedNFT, getNFTbyOwner };
 };
 
 export { useConnectContract };

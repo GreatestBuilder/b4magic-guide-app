@@ -1,7 +1,9 @@
 "use client";
 
 import { PureImage } from "@/components/Commons/Logos";
+import { useConnectContract } from "@/hooks/blockChain/useConnect";
 import React, { useEffect, useMemo, useState } from "react";
+import { useAccount } from "wagmi";
 
 interface IMyPastUIProps {
   data: Array<{
@@ -18,6 +20,16 @@ const DEFAULT_PAGE_SIZE = 8;
 const DEFAULT_LENGTH = 17;
 
 const MyPastUI = () => {
+  // const { address } = useAccount();
+  const { getNFTbyOwner } = useConnectContract();
+
+  useEffect(() => {
+    (async () => {
+      const res = await getNFTbyOwner();
+      console.log(res);
+    })();
+  }, []);
+
   const mockArr = useMemo(() => {
     return Array.from({ length: DEFAULT_LENGTH }).map((_, index) => {
       return {
@@ -63,27 +75,30 @@ const MyPastUI = () => {
   return (
     <div className="relative">
       <div>
-        <div className="grid grid-cols-4 gap-4">
-          {myPassList?.data?.map((item, index) => {
-            return (
-              <div key={index}>
-                <div className="relative">
-                  <PureImage url="/frame/MAGIC_FRAME.svg" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div>
-                      <div className="text-6xl text-center">Up</div>
-                      <div className="text-6xl text-center">
-                        trend {item?.id}
+        <div className="animated-bottom-to-top">
+          <div className="grid grid-cols-4 gap-4">
+            {myPassList?.data?.map((item, index) => {
+              return (
+                <div key={index}>
+                  <div className="relative">
+                    <PureImage url="/frame/MAGIC_FRAME.svg" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div>
+                        <div className="text-6xl text-center">Up</div>
+                        <div className="text-6xl text-center">
+                          trend {item?.id}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-        <div>
-          <div className="absolute right-[-80px] top-2 flex items-center justify-center">
+
+        <div className="absolute right-[-80px] top-2 flex items-center justify-center">
+          <div className="animated-right-to-left">
             <Pagination
               current={myPassList.current}
               total={myPassList.total}

@@ -16,7 +16,8 @@ const sepoliaChain = {
   nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
   rpcUrls: {
     default: {
-      http: ["https://84532.rpc.thirdweb.com/d391b93f5f62d9c15f67142e43841acc"],
+      http: ["https://sepolia.base.org"],
+      // http: ["https://84532.rpc.thirdweb.com/d391b93f5f62d9c15f67142e43841acc"],
     },
   },
   blockExplorers: {

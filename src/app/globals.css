@@ -176,6 +176,34 @@ body {
 .animated-top-to-bottom {
   animation: top-to-bottom 0.75s ease-out;
 }
+.animated-bottom-to-top {
+  position: relative;
+  animation: fromBottom 1s alternate;
+}
+.animated-right-to-left {
+  animation: fromRight 1s alternate;
+}
+@keyframes fromRight {
+  0% {
+    transform: translate(100px, 0);
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes fromBottom {
+  0% {
+    transform: translate(0, 100px);
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
 
 @keyframes top-to-bottom {
   0% {

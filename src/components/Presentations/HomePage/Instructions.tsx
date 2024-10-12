@@ -81,10 +81,10 @@ const Instruction = (props: IInstructionProps) => {
             2. Close your eyes, concentrate completely on what you want to ask.
           </p>
           <p className="highlight-bg border-b border-b-primary-color mb-5">
-            {` 3. Hold down the GO button (don't let go), when your intuition
-      tells you the right time,
-      <br /> release the mouse and you will have the answer after
-      confirming the transaction.`}
+            3. Hold down the GO button (don't let go), when your intuition tells
+            you the right time,
+            <br /> release the mouse and you will have the answer after
+            confirming the transaction.
           </p>
           <p className="highlight-bg border-b border-b-primary-color mb-5">
             4. Repeat the process for other questions.

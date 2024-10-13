@@ -1,5 +1,6 @@
 "use client";
 
+import { Basenames } from "@/components/Presentations/Web3/BaseName";
 import { emojiAvatarForAddress } from "@/lib/emojiAvatarForAddress";
 import { middleEllipsis } from "@/lib/utils";
 import {
@@ -86,21 +87,8 @@ export const ConnectBtn = () => {
         className="flex justify-center items-center py-2 px-4 border border-neutral-700 bg-neutral-800/30 rounded-xl  gap-x-2 cursor-pointer"
         onClick={async () => openAccountModal?.()}
       >
-        <div
-          tabIndex={1}
-          className="h-4 w-4 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden"
-          style={{
-            backgroundColor,
-            boxShadow: "0px 2px 2px 0px rgba(81, 98, 255, 0.20)",
-          }}
-        >
-          {emoji}
-        </div>
-        <div>{middleEllipsis(address)}</div>
+        <Basenames address={address} />
       </div>
-      <button className="btn ml-2" onClick={openChainModal}>
-        Switch Networks
-      </button>
     </div>
   );
 };

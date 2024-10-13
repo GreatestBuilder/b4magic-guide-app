@@ -14,7 +14,7 @@ const defaultUrl =
 const useConnectContract = () => {
   const [isMinting, setIsMinting] = useState<null | boolean>(null);
 
-  const { isConnected, address } = useAccount();
+  const { isConnected } = useAccount();
 
   const { openConnectModal } = useConnectModal();
 
@@ -54,16 +54,13 @@ const useConnectContract = () => {
     }
   };
 
-  const getNFTbyOwner = async () => {
+  const getNFTbyOwner = async (address: string) => {
     try {
       if (!isConnected) {
         openConnectModal?.();
         return;
       }
 
-      console.log("====================================");
-      console.log({ address });
-      console.log("====================================");
       const { ethereum } = window;
       if (ethereum) {
         const provider = new ethers.BrowserProvider(ethereum);
@@ -122,6 +119,7 @@ const useConnectContract = () => {
     } catch (error) {
       setIsMinting(false);
       console.log(error);
+      getQuoteContent(defaultUrl);
       return defaultUrl;
     }
   };

@@ -64,9 +64,7 @@ const Headers = () => {
             </div>
           </div>
           <div style={{ flex: 1 }}>
-            <div className="flex gap-6 items-center">
-              <ConnectBtn />
-            </div>
+            <ConnectBtn />
           </div>
         </div>
       </nav>

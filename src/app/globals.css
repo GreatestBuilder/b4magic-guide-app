@@ -164,6 +164,13 @@ body {
   text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
 }
 
+.wallet-btn {
+  gap: 10px;
+}
+.wallet-btn svg {
+  width: 30px;
+  height: 30px;
+}
 .typewriter .text-typing {
   overflow: hidden; /* Ensures the content is not revealed until the animation */
   /* border-right: 0.15em solid #f2da85; The typwriter cursor */

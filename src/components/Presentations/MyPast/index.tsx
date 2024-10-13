@@ -20,15 +20,17 @@ const DEFAULT_PAGE_SIZE = 8;
 const DEFAULT_LENGTH = 17;
 
 const MyPastUI = () => {
-  // const { address } = useAccount();
+  const { address } = useAccount();
   const { getNFTbyOwner } = useConnectContract();
 
   useEffect(() => {
     (async () => {
-      const res = await getNFTbyOwner();
-      console.log(res);
+      if (address) {
+        const res = await getNFTbyOwner(address);
+        console.log(res);
+      }
     })();
-  }, []);
+  }, [address]);
 
   const mockArr = useMemo(() => {
     return Array.from({ length: DEFAULT_LENGTH }).map((_, index) => {

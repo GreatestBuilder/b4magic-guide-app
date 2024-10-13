@@ -1,12 +1,11 @@
-import { ethers } from "ethers";
-import abi from "../../components/ABI/abi.json";
-import QUOTE_LIST from "../../../data/quote_ipfs_mapping.json";
 import { ContractAddress } from "@/lib/config";
 import { turnRandomNumberFromRange } from "@/lib/utils";
-import { useState } from "react";
-import axios from "axios";
-import { useAccount } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { ethers } from "ethers";
+import { useState } from "react";
+import { useAccount } from "wagmi";
+import QUOTE_LIST from "../../../data/quote_ipfs_mapping.json";
+import abi from "../../components/ABI/abi.json";
 
 const defaultUrl =
   "https://ipfs.io/ipfs/QmPw1ogeGvyrXRQNK8WD4WNTxsuwjvVsaKkmHP6HWQzrZm";
@@ -65,7 +64,8 @@ const useConnectContract = () => {
       if (ethereum) {
         const provider = new ethers.BrowserProvider(ethereum);
         const nftContract = new ethers.Contract(ContractAddress, abi, provider);
-        return await nftContract.getNFTsByOwner(address);
+        const result = await nftContract.getNFTsByOwner(address);
+        return bigIntToString(result);
       } else {
         console.log("Ethereum object doesn't exist!");
       }
@@ -82,17 +82,8 @@ const useConnectContract = () => {
         const provider = new ethers.BrowserProvider(ethereum);
         const signer = await provider.getSigner();
         const nftContract = new ethers.Contract(ContractAddress, abi, signer);
-        let tokenUri = await nftContract.tokenURI(tokenId);
-
-        console.log("====================================");
-        console.log({ tokenUri });
-        console.log("====================================");
-        let data = await axios.get(tokenUri);
-        let meta = data.data;
-
-        console.log("====================================");
-        console.log({ meta });
-        console.log("====================================");
+        const tokenUri = await nftContract.tokenURI(tokenId);
+        return getQuoteContent(tokenUri);
       } else {
         console.log("Ethereum object doesn't exist!");
       }
@@ -128,3 +119,12 @@ const useConnectContract = () => {
 };
 
 export { useConnectContract };
+
+// Define a utility function to convert BigInt to string for JSON compatibility
+const bigIntToString = (obj: any): any => {
+  return JSON.parse(
+    JSON.stringify(obj, (key, value) =>
+      typeof value === "bigint" ? value.toString() : value
+    )
+  );
+};

@@ -2,6 +2,7 @@
 
 import { Chain, getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { config as dotenvConfig } from "dotenv";
+import { baseSepolia } from "viem/chains";
 import { cookieStorage, createStorage, http } from "wagmi";
 
 // Load environment variables from .env file
@@ -31,7 +32,7 @@ const sepoliaChain = {
   },
 } as const satisfies Chain;
 
-const supportedChains: Chain[] = [sepoliaChain];
+const supportedChains: Chain[] = [baseSepolia];
 
 export const config = getDefaultConfig({
   appName: "WalletConnection",

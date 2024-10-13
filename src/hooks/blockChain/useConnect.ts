@@ -3,22 +3,44 @@ import { turnRandomNumberFromRange } from "@/lib/utils";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { ethers } from "ethers";
 import { useState } from "react";
-import { useAccount } from "wagmi";
+import {
+  useAccount,
+  useChainId,
+  useClient,
+  useSwitchChain,
+  useWalletClient,
+} from "wagmi";
 import QUOTE_LIST from "../../../data/quote_ipfs_mapping.json";
 import abi from "../../components/ABI/abi.json";
+import { baseSepolia } from "viem/chains";
 
 const defaultUrl =
   "https://ipfs.io/ipfs/QmPw1ogeGvyrXRQNK8WD4WNTxsuwjvVsaKkmHP6HWQzrZm";
 
 const useConnectContract = () => {
+  const { isConnected, chain } = useAccount();
+  const { openConnectModal } = useConnectModal();
   const [isMinting, setIsMinting] = useState<null | boolean>(null);
 
-  const { isConnected } = useAccount();
-
-  const { openConnectModal } = useConnectModal();
+  const { switchChain } = useSwitchChain();
 
   const onMintNft = async () => {
     try {
+      console.log("====================================");
+      console.log({ chain }, { baseSepolia });
+      console.log("====================================");
+      if (!isConnected) {
+        openConnectModal?.();
+        return;
+      }
+      if (baseSepolia.id !== chain?.id) {
+        switchChain({
+          chainId: baseSepolia.id,
+        });
+        console.log("====================================");
+        console.log("switch chain");
+        console.log("====================================");
+      }
       const { ethereum } = window;
 
       if (ethereum) {

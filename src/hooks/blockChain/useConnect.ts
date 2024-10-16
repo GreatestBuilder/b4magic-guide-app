@@ -1,84 +1,103 @@
-import { ContractAddress } from "@/lib/config";
-import { turnRandomNumberFromRange } from "@/lib/utils";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { client, ContractAddress } from "@/lib/config";
 import { ethers } from "ethers";
 import { useState } from "react";
+import { getContract } from "thirdweb";
+import { baseSepolia } from "thirdweb/chains";
 import {
-  useAccount,
-  useChainId,
-  useClient,
-  useSwitchChain,
-  useWalletClient,
-} from "wagmi";
-import QUOTE_LIST from "../../../data/quote_ipfs_mapping.json";
+  useActiveAccount,
+  useActiveWalletChain,
+  useSwitchActiveWalletChain,
+} from "thirdweb/react";
+import { useWriteContract } from "wagmi";
 import abi from "../../components/ABI/abi.json";
-import { baseSepolia } from "viem/chains";
 
 const defaultUrl =
   "https://ipfs.io/ipfs/QmPw1ogeGvyrXRQNK8WD4WNTxsuwjvVsaKkmHP6HWQzrZm";
 
 const useConnectContract = () => {
-  const { isConnected, chain } = useAccount();
-  const { openConnectModal } = useConnectModal();
+  const isConnected = false;
+  // const { isConnected } = useAccount();
+  // const { openConnectModal } = useConnectModal();
   const [isMinting, setIsMinting] = useState<null | boolean>(null);
 
-  const { switchChain } = useSwitchChain();
+  const activeAccount = useActiveAccount();
+  const { writeContractAsync } = useWriteContract();
+  const walletChain = useActiveWalletChain();
+  const switchChain = useSwitchActiveWalletChain();
+
+  // const {} = useReadContract(abi, {
+  //   contract,
+  //   address: activeAccount?.address ?? "",
+  // });
 
   const onMintNft = async () => {
     try {
+      setIsMinting(true);
+      if (walletChain?.id !== baseSepolia.id) await switchChain(baseSepolia);
+
+      const thirdwebContract = getContract({
+        address: ContractAddress,
+        chain: baseSepolia,
+        client: client,
+      });
+
       console.log("====================================");
-      console.log({ chain }, { baseSepolia });
+      console.log({ thirdwebContract });
       console.log("====================================");
-      if (!isConnected) {
-        openConnectModal?.();
-        return;
-      }
-      if (baseSepolia.id !== chain?.id) {
-        switchChain({
-          chainId: baseSepolia.id,
-        });
-        console.log("====================================");
-        console.log("switch chain");
-        console.log("====================================");
-      }
-      const { ethereum } = window;
-
-      if (ethereum) {
-        setIsMinting(true);
-        const provider = new ethers.BrowserProvider(ethereum);
-        const signer = await provider.getSigner();
-        const nftContract = new ethers.Contract(ContractAddress, abi, signer);
-
-        let nftTx = await nftContract.mintNFT(
-          "QmUN9EQoBhmB8h3Eso613CupwJ3fiVvEzqmHBLNQm4ZArM"
-        );
-        console.log("Mining....", nftTx.hash);
-
-        let tx = await nftTx.wait();
-        console.log("Mined!", tx);
-        if (tx) {
-          const randomIndex = turnRandomNumberFromRange(
-            1,
-            177
-          ).toString() as keyof typeof QUOTE_LIST;
-          const getIpfsUrl = QUOTE_LIST[randomIndex];
-          return getQuoteContent(getIpfsUrl);
-        }
-      } else {
-        console.log("Ethereum object doesn't exist!");
-        return null;
-      }
+      const hash = await writeContractAsync({
+        abi,
+        address: "0x8FE1c1980F3DCDc905A102Dd90DeDB277BCE848D",
+        functionName: "mintNFT",
+        args: ["QmUN9EQoBhmB8h3Eso613CupwJ3fiVvEzqmHBLNQm4ZArM"],
+      });
+      console.log({ hash });
+      alert("Transaction submitted: " + hash);
     } catch (error) {
       console.log("Error minting character", error);
       setIsMinting(false);
       return null;
     }
   };
+  // const onMintNft = async () => {
+  //   try {
+  //     const { ethereum } = window;
+
+  //     if (ethereum) {
+  //       setIsMinting(true);
+  //       const provider = new ethers.BrowserProvider(ethereum);
+  //       const signer = await provider.getSigner();
+  //       const nftContract = new ethers.Contract(ContractAddress, abi, signer);
+
+  //       let nftTx = await nftContract.mintNFT(
+  //         "QmUN9EQoBhmB8h3Eso613CupwJ3fiVvEzqmHBLNQm4ZArM"
+  //       );
+  //       console.log("Mining....", nftTx.hash);
+
+  //       let tx = await nftTx.wait();
+  //       console.log("Mined!", tx);
+  //       if (tx) {
+  //         const randomIndex = turnRandomNumberFromRange(
+  //           1,
+  //           177
+  //         ).toString() as keyof typeof QUOTE_LIST;
+  //         const getIpfsUrl = QUOTE_LIST[randomIndex];
+  //         return getQuoteContent(getIpfsUrl);
+  //       }
+  //     } else {
+  //       console.log("Ethereum object doesn't exist!");
+  //       return null;
+  //     }
+  //   } catch (error) {
+  //     console.log("Error minting character", error);
+  //     setIsMinting(false);
+  //     return null;
+  //   }
+  // };
 
   const getNFTbyOwner = async (address: string) => {
     try {
       if (!isConnected) {
-        openConnectModal?.();
+        // openConnectModal?.();
         return;
       }
 

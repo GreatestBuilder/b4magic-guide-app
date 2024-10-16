@@ -180,6 +180,18 @@ body {
   animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
   display: inline-block;
 }
+
+.btn-customize {
+  position: relative;
+}
+.btn-customize button {
+  background-color: transparent;
+  border: none;
+  color: #f2da85;
+}
+.btn-customize button:hover {
+  background-color: transparent;
+}
 .animated-top-to-bottom {
   animation: top-to-bottom 0.75s ease-out;
 }

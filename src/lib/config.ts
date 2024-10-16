@@ -4,9 +4,11 @@ import { Chain, getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { config as dotenvConfig } from "dotenv";
 import { baseSepolia } from "viem/chains";
 import { cookieStorage, createStorage, http } from "wagmi";
+import { createThirdwebClient } from "thirdweb";
+
+dotenvConfig();
 
 // Load environment variables from .env file
-dotenvConfig();
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID ?? ""; // Corrected to use process.env
 
@@ -49,3 +51,7 @@ export const config = getDefaultConfig({
 });
 
 export const ContractAddress = process.env.NEXT_PUBLIC_SCA ?? "";
+
+export const client = createThirdwebClient({
+  clientId: process.env.NEXT_PUBLIC_CLIENT_ID ?? "",
+});

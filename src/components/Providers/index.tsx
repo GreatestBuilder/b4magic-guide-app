@@ -13,7 +13,7 @@ type Props = {
   cookie?: string | null;
 };
 
-export default function Providers({ children, cookie }: Props) {
+export default function Providers({ children, cookie }: Readonly<Props>) {
   const initialState = cookieToInitialState(config, cookie);
 
   return (

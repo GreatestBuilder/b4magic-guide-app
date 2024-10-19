@@ -33,9 +33,6 @@ const Instruction = (props: IInstructionProps) => {
       return;
     }
     const quoteInfos = await onMintNft();
-    console.log("====================================");
-    console.log({ quoteInfos });
-    console.log("====================================");
     if (quoteInfos?.name || quoteInfos?.description) {
       onUpdate(quoteInfos);
     }
@@ -121,7 +118,7 @@ const Instruction = (props: IInstructionProps) => {
         <div className="flex items-center justify-center">
           <button
             className="relative h-12 w-[200px] cursor-pointer"
-            onClick={txtInput ? () => onGo() : () => null}
+            onClick={!isMinting || txtInput ? () => onGo() : () => null}
           >
             <PureImage
               style={{

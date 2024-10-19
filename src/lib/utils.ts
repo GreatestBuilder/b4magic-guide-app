@@ -1,6 +1,6 @@
 export const middleEllipsis = (
-  str: string | any,
-  len: number = 3,
+  str?: string,
+  len: number = 4,
   symbol = "..."
 ) => {
   if (!str) return "";

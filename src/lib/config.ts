@@ -47,5 +47,11 @@ export const config = getDefaultConfig({
     {}
   ),
 });
+// export const config = createConfig({
+//   chains: [base],
+//   transports: {
+//     [base.id]: http(),
+//   },
+// });
 
 export const ContractAddress = process.env.NEXT_PUBLIC_SCA ?? "";

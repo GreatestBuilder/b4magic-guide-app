@@ -6,7 +6,7 @@ interface DisplayBasenameProps {
   address: `0x${string}` | undefined;
 }
 
-export function Basenames({ address }: DisplayBasenameProps) {
+export function Basenames({ address }: Readonly<DisplayBasenameProps>) {
   return (
     <Identity className="wallet-btn" address={address} chain={base}>
       <Avatar

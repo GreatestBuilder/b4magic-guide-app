@@ -1,18 +1,16 @@
 "use client";
 
-import { ConnectBtn } from "@/components/Commons/Buttons/ConnectButton";
 import { PureImage } from "@/components/Commons/Logos";
 import { useConnectContract } from "@/hooks/blockChain/useConnect";
 import { NftMetadata } from "@/lib/interface";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAccount } from "wagmi";
+import styles from "./Card.module.css";
+import { ConnectBtn } from "@/components/Commons/Buttons/ConnectButton";
 
 interface IMyPastUIProps {
-  data: Array<{
-    id: number;
-    title: string;
-  }>;
+  data: string[];
   total: number;
   current: number;
   pageSize?: number;
@@ -20,37 +18,15 @@ interface IMyPastUIProps {
 
 const DEFAULT_CURRENT = 1;
 const DEFAULT_PAGE_SIZE = 8;
-const DEFAULT_LENGTH = 17;
 
 const MyPastUI = () => {
   const { address } = useAccount();
   const { getNFTbyOwner, getMintedNFT } = useConnectContract();
   const { openConnectModal } = useConnectModal();
 
-  const [nftsList, setNftsList] = useState<null | string[]>(null);
   const [nftInfos, setNftInfos] = useState<null | NftMetadata>(null);
 
-  const [activeId, setActiveId] = useState<string>("");
-
-  useEffect(() => {
-    (async () => {
-      if (address) {
-        // const test = "0x73092Bf0134CC1a74a2d25DEAd432d2708cde8Da";
-        const result = await getNFTbyOwner(address);
-        setNftsList(result);
-        console.log(result);
-      }
-    })();
-  }, [address]);
-
-  const mockArr = useMemo(() => {
-    return Array.from({ length: DEFAULT_LENGTH }).map((_, index) => {
-      return {
-        id: index,
-        title: "title",
-      };
-    });
-  }, []);
+  const nftsList = useRef<any>(null);
 
   const [myPassList, setMyPassList] = useState<IMyPastUIProps>({
     data: [],
@@ -60,23 +36,37 @@ const MyPastUI = () => {
   });
 
   useEffect(() => {
-    setMyPassList((prev) => {
-      return {
-        ...prev,
-        data: mockArr.slice(0, DEFAULT_PAGE_SIZE),
-        total: mockArr.length,
-      };
-    });
-  }, []);
+    (async () => {
+      if (address) {
+        const result = await getNFTbyOwner(address);
+        nftsList.current = result;
+        setMyPassList((prev) => {
+          return {
+            ...prev,
+            data: result?.slice(0, DEFAULT_PAGE_SIZE) ?? [],
+            total: result?.length ?? 0,
+          };
+        });
+      }
+    })();
+  }, [address]);
 
   const onReadNFTs = async (tokenId: string) => {
-    setActiveId(tokenId);
+    if (nftInfos?.id === tokenId) {
+      setNftInfos(null);
+      return;
+    }
+    setNftInfos({ id: tokenId } as NftMetadata);
+    // const result: NftMetadata = await new Promise((resolve) => {
+    //   setTimeout(() => {
+    //     return resolve(mockData);
+    //   }, 3000);
+    // });
     const result = await getMintedNFT(tokenId);
-    // const result = mockData;
-    setNftInfos(result);
-    console.log("====================================");
-    console.log({ result });
-    console.log("====================================");
+
+    setNftInfos((prev: any) => {
+      return { ...prev, ...result };
+    });
   };
 
   const handlePageChange = ({
@@ -86,17 +76,23 @@ const MyPastUI = () => {
     page: number;
     pageSize: number;
   }) => {
-    setMyPassList((prev) => {
-      return {
-        ...prev,
-        current: page,
-        data: mockArr.slice((page - 1) * pageSize, page * pageSize),
-      };
-    });
+    if (nftsList?.current?.length) {
+      setMyPassList((prev: any) => {
+        return {
+          ...prev,
+          current: page,
+          data: nftsList.current?.slice((page - 1) * pageSize, page * pageSize),
+        };
+      });
+    }
   };
+
   if (!address) {
-    openConnectModal?.();
-    return null;
+    return (
+      <div className="flex items-center justify-center">
+        <ConnectBtn />
+      </div>
+    );
   }
 
   if (nftsList === null) {
@@ -106,7 +102,7 @@ const MyPastUI = () => {
       </div>
     );
   }
-  if (nftsList?.length === 0) {
+  if (nftsList?.current?.length === 0) {
     return (
       <div className="mt-24">
         <div className="text-3xl text-center">No NFTs found</div>
@@ -119,40 +115,86 @@ const MyPastUI = () => {
       <div>
         <div className="animated-bottom-to-top">
           <div className="grid grid-cols-4 gap-4">
-            {nftsList?.map((item, index) => {
-              return (
-                <button key={index} onClick={() => onReadNFTs(item)}>
-                  <div className="relative">
-                    <PureImage url="/frame/MAGIC_FRAME.svg" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      {activeId === item ? (
-                        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                          <div className="text-3xl text-white">Loading...</div>
+            {myPassList?.data?.length ? (
+              <>
+                {myPassList?.data?.map((item) => {
+                  return (
+                    <button
+                      key={item}
+                      onClick={() => onReadNFTs(item)}
+                      className={styles.cardContainer}
+                    >
+                      <div
+                        className={`${styles.card} ${
+                          nftInfos?.name && nftInfos?.id === item
+                            ? styles.flipped
+                            : ""
+                        }`}
+                      >
+                        <PureImage url="/frame/MAGIC_FRAME.svg" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          {(() => {
+                            if (nftInfos?.id === item && !nftInfos?.name) {
+                              return (
+                                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                  <div className="text-3xl text-white">
+                                    Loading...
+                                  </div>
+                                </div>
+                              );
+                            }
+                            if (
+                              nftInfos?.id === item &&
+                              nftInfos?.id &&
+                              nftInfos?.name
+                            ) {
+                              return (
+                                <div>
+                                  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                    <div
+                                      className="text-3xl text-white"
+                                      style={{
+                                        transform: "rotateY(180deg)",
+                                      }}
+                                    >
+                                      {nftInfos?.name}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            }
+                            return (
+                              <div>
+                                <div className="text-6xl text-center">Up</div>
+                                <div className="text-6xl text-center">
+                                  trend {item}
+                                </div>
+                              </div>
+                            );
+                          })()}
                         </div>
-                      ) : (
-                        <div>
-                          <div className="text-6xl text-center">Up</div>
-                          <div className="text-6xl text-center">trend</div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
+                      </div>
+                    </button>
+                  );
+                })}
+              </>
+            ) : (
+              <div className="text-3xl text-center">No NFTs found</div>
+            )}
           </div>
         </div>
-
-        <div className="absolute right-[-80px] top-2 flex items-center justify-center">
-          <div className="animated-right-to-left">
-            <Pagination
-              current={myPassList.current}
-              total={myPassList.total}
-              onPageChange={handlePageChange}
-              pageSize={myPassList.pageSize ?? DEFAULT_PAGE_SIZE}
-            />
+        {nftsList?.current?.length >= DEFAULT_PAGE_SIZE && (
+          <div className="absolute right-[-80px] top-2 flex items-center justify-center">
+            <div className="animated-right-to-left">
+              <Pagination
+                current={myPassList.current}
+                total={myPassList.total}
+                onPageChange={handlePageChange}
+                pageSize={myPassList.pageSize ?? DEFAULT_PAGE_SIZE}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

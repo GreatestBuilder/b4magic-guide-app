@@ -1,7 +1,7 @@
 import { ArrowLine } from "@/components/Commons";
 import { Button } from "@/components/Commons/Buttons";
 import { PureImage } from "@/components/Commons/Logos";
-import { useState } from "react";
+import React, { useState } from "react";
 
 import { useConnectContract } from "@/hooks/blockChain/useConnect";
 import { NftMetadata } from "@/lib/interface";
@@ -20,8 +20,10 @@ const Instruction = (props: IInstructionProps) => {
   const { openConnectModal } = useConnectModal();
 
   const [isCollapse, setIsCollapse] = useState(false);
-
+  const [errorText, setErrorText] = useState<null | string>(null);
   const [txtInput, setTxtInput] = useState<null | string>(null);
+
+  const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
 
   const onChange = () => {
     setIsCollapse((prev) => !prev);
@@ -30,6 +32,14 @@ const Instruction = (props: IInstructionProps) => {
   const onGo = async () => {
     if (!isConnected) {
       openConnectModal?.();
+      return;
+    }
+    if (!txtInput) {
+      textAreaRef.current?.focus();
+      setErrorText("Please type in your question");
+      return;
+    }
+    if (isMinting) {
       return;
     }
     const quoteInfos = await onMintNft();
@@ -103,6 +113,7 @@ const Instruction = (props: IInstructionProps) => {
               </div>
             </div>
             <textarea
+              ref={textAreaRef}
               onChange={handleChange}
               className="h-full w-full text-primary-color"
               style={{
@@ -112,13 +123,17 @@ const Instruction = (props: IInstructionProps) => {
               }}
             />
           </div>
+          {errorText && (
+            <div style={{ padding: "10px 0", color: "red" }}>{errorText}</div>
+          )}
         </div>
       </div>
+
       <div className="mt-10">
         <div className="flex items-center justify-center">
           <button
             className="relative h-12 w-[200px] cursor-pointer"
-            onClick={!isMinting || txtInput ? () => onGo() : () => null}
+            onClick={onGo}
           >
             <PureImage
               style={{

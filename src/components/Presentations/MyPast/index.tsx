@@ -1,13 +1,12 @@
 "use client";
 
+import { ConnectBtn } from "@/components/Commons/Buttons/ConnectButton";
 import { PureImage } from "@/components/Commons/Logos";
 import { useConnectContract } from "@/hooks/blockChain/useConnect";
 import { NftMetadata } from "@/lib/interface";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useRef, useState } from "react";
 import { useAccount } from "wagmi";
 import styles from "./Card.module.css";
-import { ConnectBtn } from "@/components/Commons/Buttons/ConnectButton";
 
 interface IMyPastUIProps {
   data: string[];
@@ -22,7 +21,6 @@ const DEFAULT_PAGE_SIZE = 8;
 const MyPastUI = () => {
   const { address } = useAccount();
   const { getNFTbyOwner, getMintedNFT } = useConnectContract();
-  const { openConnectModal } = useConnectModal();
 
   const [nftInfos, setNftInfos] = useState<null | NftMetadata>(null);
 
@@ -104,7 +102,7 @@ const MyPastUI = () => {
   }
   if (nftsList?.current?.length === 0) {
     return (
-      <div className="mt-24">
+      <div className="mt-24 flex items-center justify-center">
         <div className="text-3xl text-center">No NFTs found</div>
       </div>
     );

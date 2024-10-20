@@ -163,9 +163,15 @@ const MyPastUI = () => {
                             }
                             return (
                               <div>
-                                <div className="text-6xl text-center">Up</div>
-                                <div className="text-6xl text-center">
-                                  trend {item}
+                                <div className="text-5xl text-center">Up</div>
+                                <div className="text-5xl text-center">
+                                  trend
+                                </div>
+                                <div
+                                  className="text-center"
+                                  style={{ fontSize: 10, marginTop: 24 }}
+                                >
+                                  click to open
                                 </div>
                               </div>
                             );
@@ -272,16 +278,4 @@ const Pagination = (props: IPaginationProps) => {
       </div>
     </div>
   );
-};
-
-const mockData = {
-  name: "God NFT - Secret Book",
-  description: "Nothing is random, everything is for granted",
-  image: "http://ipfs.io/ipfs/QmXMyx1hgyLHyQ2CpJ7kUrBAbGoMszV5gDAwNS2dmHX9ba",
-  attributes: [
-    {
-      trait_type: "Quote",
-      value: "Of course",
-    },
-  ],
 };

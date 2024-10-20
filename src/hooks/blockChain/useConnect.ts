@@ -8,6 +8,8 @@ import { useAccount, useSwitchChain } from "wagmi";
 import QUOTE_LIST from "../../../data/quote_ipfs_mapping.json";
 import abi from "../../components/ABI/abi.json";
 
+import axios from "axios";
+
 const defaultUrl =
   "https://ipfs.io/ipfs/QmPw1ogeGvyrXRQNK8WD4WNTxsuwjvVsaKkmHP6HWQzrZm";
 
@@ -97,13 +99,12 @@ const useConnectContract = () => {
       return defaultUrl;
     }
     try {
-      let response = await fetch(quoteUrl, { cache: "no-store" });
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
-      let meta = response.json();
+      let response = await axios.get(quoteUrl);
+      console.log("====================================");
+      console.log({ response });
+      console.log("====================================");
       setIsMinting(false);
-      return meta;
+      return response;
     } catch (error) {
       setIsMinting(false);
       console.log(error);

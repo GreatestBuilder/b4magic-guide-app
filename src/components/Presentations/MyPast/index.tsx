@@ -7,6 +7,7 @@ import { NftMetadata } from "@/lib/interface";
 import { useEffect, useRef, useState } from "react";
 import { useAccount } from "wagmi";
 import styles from "./Card.module.css";
+import { ContractAddress } from "@/lib/config";
 interface IMyPastUIProps {
   data: string[];
   total: number;
@@ -34,8 +35,8 @@ const MyPastUI = () => {
 
   useEffect(() => {
     (async () => {
-      if (address) {
-        const result = await getNFTbyOwner(address);
+      if (ContractAddress) {
+        const result = await getNFTbyOwner(ContractAddress);
         nftsList.current = result;
         setMyPassList((prev) => {
           return {

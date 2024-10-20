@@ -2,7 +2,6 @@ import { ContractAddress, defaultWagmiConfig } from "@/lib/config";
 import { turnRandomNumberFromRange } from "@/lib/utils";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { readContract, writeContract } from "@wagmi/core";
-import { ethers } from "ethers";
 import { useState } from "react";
 import { baseSepolia } from "viem/chains";
 import { useAccount, useSwitchChain } from "wagmi";
@@ -62,26 +61,15 @@ const useConnectContract = () => {
         openConnectModal?.();
         return;
       }
-      if (ContractAddress) {
+      if (_address) {
         const result = await readContract(defaultWagmiConfig, {
           abi,
-          address: ContractAddress as any,
+          address: _address as any,
           functionName: "getNFTsByOwner",
+          args: [address],
+          account: address,
         });
-
-        console.log("====================================");
-        console.log({ result });
-        console.log("====================================");
-      }
-
-      const { ethereum } = window;
-      if (ethereum) {
-        const provider = new ethers.BrowserProvider(ethereum);
-        const nftContract = new ethers.Contract(ContractAddress, abi, provider);
-        const result = await nftContract.getNFTsByOwner(address);
         return bigIntToString(result);
-      } else {
-        console.log("Ethereum object doesn't exist!");
       }
     } catch (error) {
       console.log(error);
@@ -90,16 +78,14 @@ const useConnectContract = () => {
 
   const getMintedNFT = async (tokenId: string) => {
     try {
-      const { ethereum } = window;
-
-      if (ethereum) {
-        const provider = new ethers.BrowserProvider(ethereum);
-        const signer = await provider.getSigner();
-        const nftContract = new ethers.Contract(ContractAddress, abi, signer);
-        const tokenUri = await nftContract.tokenURI(tokenId);
-        return getQuoteContent(tokenUri);
-      } else {
-        console.log("Ethereum object doesn't exist!");
+      const getMintedNFTResult = await readContract(defaultWagmiConfig, {
+        abi,
+        address: ContractAddress as any,
+        functionName: "tokenURI",
+        args: [tokenId],
+      });
+      if (getMintedNFTResult) {
+        return getQuoteContent(getMintedNFTResult as string);
       }
     } catch (error) {
       console.log(error);
@@ -116,9 +102,6 @@ const useConnectContract = () => {
         throw new Error("Failed to fetch data");
       }
       let meta = response.json();
-      console.log("====================================");
-      console.log({ meta });
-      console.log("====================================");
       setIsMinting(false);
       return meta;
     } catch (error) {

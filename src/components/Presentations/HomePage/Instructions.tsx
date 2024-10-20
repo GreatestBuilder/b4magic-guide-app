@@ -5,7 +5,7 @@ import React, { useState } from "react";
 
 import { useConnectContract } from "@/hooks/blockChain/useConnect";
 import { NftMetadata } from "@/lib/interface";
-import { useAccount } from "wagmi";
+import { useAccount, useContractWrite } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 interface IInstructionProps {

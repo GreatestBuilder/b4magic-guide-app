@@ -4,7 +4,7 @@ import { WagmiProvider, cookieToInitialState } from "wagmi";
 import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { config, defaultWagmiConfig } from "@/lib/config";
+import { defaultWagmiConfig } from "@/lib/config";
 import { coinbaseWallet } from "wagmi/connectors";
 
 const queryClient = new QueryClient();

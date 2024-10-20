@@ -1,10 +1,11 @@
-import { ContractAddress } from "@/lib/config";
+import { ContractAddress, defaultWagmiConfig } from "@/lib/config";
 import { turnRandomNumberFromRange } from "@/lib/utils";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { readContract, writeContract } from "@wagmi/core";
 import { ethers } from "ethers";
 import { useState } from "react";
 import { baseSepolia } from "viem/chains";
-import { useAccount, useSwitchChain, useWriteContract } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 import QUOTE_LIST from "../../../data/quote_ipfs_mapping.json";
 import abi from "../../components/ABI/abi.json";
 
@@ -18,8 +19,6 @@ const useConnectContract = () => {
 
   const { switchChain } = useSwitchChain();
 
-  const { writeContractAsync } = useWriteContract();
-
   const onMintNft = async () => {
     try {
       if (!isConnected) {
@@ -31,11 +30,11 @@ const useConnectContract = () => {
           chainId: baseSepolia.id,
         });
       }
-      if (address) {
+      if (ContractAddress) {
         setIsMinting(true);
-        const nftTx = await writeContractAsync({
+        const nftTx = await writeContract(defaultWagmiConfig, {
           abi,
-          address,
+          address: ContractAddress as any,
           functionName: "mintNFT",
           args: ["QmUN9EQoBhmB8h3Eso613CupwJ3fiVvEzqmHBLNQm4ZArM"],
         });
@@ -62,6 +61,17 @@ const useConnectContract = () => {
       if (!isConnected) {
         openConnectModal?.();
         return;
+      }
+      if (ContractAddress) {
+        const result = await readContract(defaultWagmiConfig, {
+          abi,
+          address: ContractAddress as any,
+          functionName: "getNFTsByOwner",
+        });
+
+        console.log("====================================");
+        console.log({ result });
+        console.log("====================================");
       }
 
       const { ethereum } = window;

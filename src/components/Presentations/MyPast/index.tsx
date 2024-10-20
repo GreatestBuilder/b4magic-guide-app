@@ -7,7 +7,6 @@ import { NftMetadata } from "@/lib/interface";
 import { useEffect, useRef, useState } from "react";
 import { useAccount } from "wagmi";
 import styles from "./Card.module.css";
-
 interface IMyPastUIProps {
   data: string[];
   total: number;

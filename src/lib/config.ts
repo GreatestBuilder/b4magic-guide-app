@@ -1,14 +1,24 @@
 "use client";
 
-import { Chain, getDefaultConfig } from "@rainbow-me/rainbowkit";
+import {
+  Chain,
+  connectorsForWallets,
+  getDefaultConfig,
+} from "@rainbow-me/rainbowkit";
 import { config as dotenvConfig } from "dotenv";
-import { baseSepolia } from "viem/chains";
-import { cookieStorage, createStorage, http } from "wagmi";
+import { base, baseSepolia } from "viem/chains";
+import { cookieStorage, createConfig, createStorage, http } from "wagmi";
+import {
+  coinbaseWallet,
+  metaMaskWallet,
+  rainbowWallet,
+  walletConnectWallet,
+} from "@rainbow-me/rainbowkit/wallets";
 
 // Load environment variables from .env file
 dotenvConfig();
 
-const projectId = process.env.NEXT_PUBLIC_PROJECT_ID ?? ""; // Corrected to use process.env
+export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID ?? ""; // Corrected to use process.env
 
 const sepoliaChain = {
   id: 84532,
@@ -32,7 +42,7 @@ const sepoliaChain = {
   },
 } as const satisfies Chain;
 
-const supportedChains: Chain[] = [baseSepolia];
+const supportedChains: Chain[] = [base, baseSepolia];
 
 export const config = getDefaultConfig({
   appName: "WalletConnection",
@@ -47,11 +57,35 @@ export const config = getDefaultConfig({
     {}
   ),
 });
-// export const config = createConfig({
-//   chains: [base],
-//   transports: {
-//     [base.id]: http(),
-//   },
-// });
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: "Recommended",
+      wallets: [coinbaseWallet],
+    },
+    {
+      groupName: "Popular",
+      wallets: [rainbowWallet, metaMaskWallet],
+    },
+    {
+      groupName: "Wallet Connect",
+      wallets: [walletConnectWallet],
+    },
+  ],
+  {
+    appName: "B4Magic guild app",
+    projectId,
+  }
+);
+
+export const defaultWagmiConfig = createConfig({
+  connectors,
+  chains: [base, baseSepolia],
+  ssr: true,
+  transports: {
+    [base.id]: http(),
+    [baseSepolia.id]: http(),
+  },
+});
 
 export const ContractAddress = process.env.NEXT_PUBLIC_SCA ?? "";

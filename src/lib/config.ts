@@ -67,3 +67,15 @@ export const defaultWagmiConfig = createConfig({
 });
 
 export const ContractAddress = process.env.NEXT_PUBLIC_SCA ?? "";
+
+export const mockResult = {
+  name: "God NFT - Secret Book",
+  description: "Nothing is random, everything is for granted",
+  image: "http://ipfs.io/ipfs/QmXMyx1hgyLHyQ2CpJ7kUrBAbGoMszV5gDAwNS2dmHX9ba",
+  attributes: [
+    {
+      trait_type: "Quote",
+      value: "Just bet on it",
+    },
+  ],
+};

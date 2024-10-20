@@ -1,14 +1,11 @@
-import { ContractAddress, defaultWagmiConfig } from "@/lib/config";
+import { ContractAddress, defaultWagmiConfig, mockResult } from "@/lib/config";
 import { turnRandomNumberFromRange } from "@/lib/utils";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { readContract, writeContract } from "@wagmi/core";
 import { useState } from "react";
-import { baseSepolia } from "viem/chains";
-import { useAccount, useSwitchChain } from "wagmi";
+import { useAccount } from "wagmi";
 import QUOTE_LIST from "../../../data/quote_ipfs_mapping.json";
 import abi from "../../components/ABI/abi.json";
-
-import axios from "axios";
 
 const defaultUrl =
   "https://ipfs.io/ipfs/QmPw1ogeGvyrXRQNK8WD4WNTxsuwjvVsaKkmHP6HWQzrZm";
@@ -18,19 +15,13 @@ const useConnectContract = () => {
   const { openConnectModal } = useConnectModal();
   const [isMinting, setIsMinting] = useState<null | boolean>(null);
 
-  const { switchChain } = useSwitchChain();
-
   const onMintNft = async () => {
     try {
       if (!isConnected) {
         openConnectModal?.();
         return;
       }
-      if (baseSepolia.id !== chain?.id) {
-        switchChain({
-          chainId: baseSepolia.id,
-        });
-      }
+
       if (ContractAddress) {
         setIsMinting(true);
         const nftTx = await writeContract(defaultWagmiConfig, {
@@ -48,12 +39,13 @@ const useConnectContract = () => {
           const getIpfsUrl = QUOTE_LIST[randomIndex];
           return getQuoteContent(getIpfsUrl);
         }
-        return null;
+        return mockResult;
       }
+      return mockResult;
     } catch (error) {
       console.log("Error minting character", error);
       setIsMinting(false);
-      return null;
+      return mockResult;
     }
   };
 
@@ -99,17 +91,16 @@ const useConnectContract = () => {
       return defaultUrl;
     }
     try {
-      let response = await axios.get(quoteUrl);
-      console.log("====================================");
-      console.log({ response });
-      console.log("====================================");
+      let response = await fetch(quoteUrl);
       setIsMinting(false);
-      return response;
+      if (response.ok) {
+        return response.json();
+      }
+      return mockResult;
     } catch (error) {
       setIsMinting(false);
       console.log(error);
-      getQuoteContent(defaultUrl);
-      return defaultUrl;
+      return mockResult;
     }
   };
 

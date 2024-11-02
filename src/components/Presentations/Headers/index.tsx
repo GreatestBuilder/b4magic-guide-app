@@ -30,7 +30,9 @@ const Headers = () => {
       <nav className="container">
         <div className="flex gap-4 justify-between items-center  text-lg capitalize text-primary-color py-3 md:py-0 px-3 md:px-0">
           <div className="flex-[5] md:flex-1">
-            <EpicLogo />
+            <Link href="/">
+              <EpicLogo />
+            </Link>
           </div>
           <div className="hidden md:block md:flex-[2]">
             <div className="flex gap-20 justify-center items-center">

@@ -12,7 +12,7 @@ const PureImage: React.FC<ILogoProps> = ({ url, mode, className, style }) => {
   return (
     <Image
       priority
-      src={url ?? "/logo/LOGO.png"}
+      src={url ?? "/logo/LOGO.svg"}
       width={0}
       height={0}
       sizes="100vw"

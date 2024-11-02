@@ -95,7 +95,7 @@ const Headers = () => {
           <div className="flex justify-between items-center">
             <button onClick={onCollapse}>
               <Link href="/">
-                <PureImage url="/btn/LOGO.svg" style={{ width: 65 }} />
+                <PureImage url="/logo/LOGO.svg" style={{ width: 65 }} />
               </Link>
             </button>
             <button onClick={onCollapse} className="">

@@ -35,7 +35,9 @@ const EpicLogo = () => {
   return (
     <div className="flex gap-3 items-center	">
       <PureImage style={{ width: 85, height: "auto" }} />
-      <div className="text-primary-color text-2xl">B4magic.guide</div>
+      <div className="hidden md:block text-primary-color text-2xl">
+        B4magic.guide
+      </div>
     </div>
   );
 };

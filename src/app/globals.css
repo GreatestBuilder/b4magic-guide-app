@@ -180,6 +180,34 @@ body {
   animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
   display: inline-block;
 }
+
+.underline-custom {
+  position: relative;
+}
+.underline-custom::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #f2da85;
+  /* visibility: hidden; */
+  /* transform: scaleX(0); */
+  transition: all 0.3s ease-in-out;
+}
+.animated-transform-scale {
+  animation: transform-scale 0.5s ease-in-out;
+}
+@keyframes transform-scale {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 .animated-top-to-bottom {
   animation: top-to-bottom 0.75s ease-out;
 }
@@ -250,7 +278,7 @@ body {
   }
 }
 
-@media screen and (max-width:768px ){
+@media screen and (max-width: 768px) {
   .text-intro {
     font-size: 1.5rem;
   }

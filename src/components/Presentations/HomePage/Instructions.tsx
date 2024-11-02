@@ -7,6 +7,7 @@ import { useConnectContract } from "@/hooks/blockChain/useConnect";
 import { NftMetadata } from "@/lib/interface";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
+import { mockResult } from "@/lib/config";
 
 interface IInstructionProps {
   onUpdate: (value: NftMetadata) => void;

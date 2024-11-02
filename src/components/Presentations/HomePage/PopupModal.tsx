@@ -26,7 +26,11 @@ const PopupModal = (props: IPopupModalProps) => {
   };
 
   return (
-    <div className="flex items-center justify-center h-full">
+    <div
+      className={`flex items-center justify-center ${
+        isSuccess ? "md:h-full" : "h-full"
+      } `}
+    >
       {isSuccess ? (
         <Results onChange={onCreate} mintInfos={mintInfos} />
       ) : (

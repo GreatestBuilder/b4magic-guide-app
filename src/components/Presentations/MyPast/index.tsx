@@ -37,6 +37,7 @@ const MyPastUI = () => {
     (async () => {
       if (ContractAddress) {
         const result = await getNFTbyOwner(ContractAddress);
+
         nftsList.current = result;
         setMyPassList((prev) => {
           return {
@@ -100,7 +101,7 @@ const MyPastUI = () => {
       </div>
     );
   }
-  if (nftsList?.current?.length === 0) {
+  if (!myPassList?.data?.length || nftsList?.current?.length === 0) {
     return (
       <div className="mt-24 flex items-center justify-center">
         <div className="text-3xl text-center">No NFTs found</div>
@@ -110,96 +111,86 @@ const MyPastUI = () => {
 
   return (
     <div className="relative">
-      <div>
-        <div className="animated-bottom-to-top">
-          <div className="grid grid-cols-4 gap-4">
-            {myPassList?.data?.length ? (
-              <>
-                {myPassList?.data?.map((item) => {
-                  return (
-                    <button
-                      key={item}
-                      onClick={() => onReadNFTs(item)}
-                      className={styles.cardContainer}
-                    >
-                      <div
-                        className={`${styles.card} ${
-                          nftInfos?.name && nftInfos?.id === item
-                            ? styles.flipped
-                            : ""
-                        }`}
-                      >
-                        <PureImage url="/frame/MAGIC_FRAME.svg" />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          {(() => {
-                            if (nftInfos?.id === item && !nftInfos?.name) {
-                              return (
-                                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                                  <div className="text-3xl text-white">
-                                    Loading...
-                                  </div>
-                                </div>
-                              );
-                            }
-                            if (
-                              nftInfos?.id === item &&
-                              nftInfos?.id &&
-                              nftInfos?.name
-                            ) {
-                              return (
-                                <div>
-                                  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                                    <div
-                                      className="text-3xl text-white"
-                                      style={{
-                                        transform: "rotateY(180deg)",
-                                      }}
-                                    >
-                                      {nftInfos?.name}
-                                    </div>
-                                  </div>
-                                </div>
-                              );
-                            }
-                            return (
-                              <div>
-                                <div className="text-5xl text-center">Up</div>
-                                <div className="text-5xl text-center">
-                                  trend
-                                </div>
-                                <div
-                                  className="text-center"
-                                  style={{ fontSize: 10, marginTop: 24 }}
-                                >
-                                  click to open
-                                </div>
+      <div className="animated-bottom-to-top overflow-y-scroll h-[calc(100vh-235px)]">
+        <div className="grid grid-cols-2 gap-0 md:grid-cols-4 md:gap-4">
+          {myPassList?.data?.map((item) => {
+            return (
+              <button
+                key={item}
+                onClick={() => onReadNFTs(item)}
+                className={styles.cardContainer}
+              >
+                <div
+                  className={`${styles.card} ${
+                    nftInfos?.name && nftInfos?.id === item
+                      ? styles.flipped
+                      : ""
+                  }`}
+                >
+                  <PureImage url="/frame/MAGIC_FRAME.svg" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    {(() => {
+                      if (nftInfos?.id === item && !nftInfos?.name) {
+                        return (
+                          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                            <div className="text-3xl text-white">
+                              Loading...
+                            </div>
+                          </div>
+                        );
+                      }
+                      if (
+                        nftInfos?.id === item &&
+                        nftInfos?.id &&
+                        nftInfos?.name
+                      ) {
+                        return (
+                          <div>
+                            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                              <div
+                                className="text-3xl text-white"
+                                style={{
+                                  transform: "rotateY(180deg)",
+                                }}
+                              >
+                                {nftInfos?.name}
                               </div>
-                            );
-                          })()}
+                            </div>
+                          </div>
+                        );
+                      }
+                      return (
+                        <div>
+                          <div className="text-5xl text-center">Up</div>
+                          <div className="text-5xl text-center">trend</div>
+                          <div
+                            className="text-center"
+                            style={{ fontSize: 10, marginTop: 24 }}
+                          >
+                            click to open
+                          </div>
                         </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </>
-            ) : (
-              <div className="text-3xl text-center">No NFTs found</div>
-            )}
+                      );
+                    })()}
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      {nftsList?.current?.length >= DEFAULT_PAGE_SIZE && (
+        <div className="relative md:absolute md:right-[-80px] md:top-2 flex items-center justify-center">
+          <div className="animated-right-to-left">
+            <Pagination
+              current={myPassList.current}
+              total={myPassList.total}
+              onPageChange={handlePageChange}
+              pageSize={myPassList.pageSize ?? DEFAULT_PAGE_SIZE}
+            />
           </div>
         </div>
-        {nftsList?.current?.length >= DEFAULT_PAGE_SIZE && (
-          <div className="absolute right-[-80px] top-2 flex items-center justify-center">
-            <div className="animated-right-to-left">
-              <Pagination
-                current={myPassList.current}
-                total={myPassList.total}
-                onPageChange={handlePageChange}
-                pageSize={myPassList.pageSize ?? DEFAULT_PAGE_SIZE}
-              />
-            </div>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 };
@@ -227,8 +218,8 @@ const Pagination = (props: IPaginationProps) => {
   };
 
   return (
-    <div className="flex justify-center mt-10">
-      <div className="flex gap-4 flex-col items-center">
+    <div className="flex justify-center mt-4 md:mt-10">
+      <div className="flex gap-4 flex-row md:flex-col items-center">
         <button
           className={`cursor-pointer ${
             current === 1 ? "text-primary-color" : "text-gray-400"

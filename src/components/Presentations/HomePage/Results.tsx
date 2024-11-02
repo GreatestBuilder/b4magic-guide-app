@@ -11,8 +11,8 @@ const Results = (props: IResultsProps) => {
   const { onChange, mintInfos } = props;
   return (
     <div>
-      <div className="grid grid-cols-3 gap-10">
-        <div className="flex justify-end ">
+      <div className="flex gap-10 flex-wrap">
+        <div className="flex justify-center md:justify-end md:flex-1 w-full">
           <button
             className="relative h-12 w-[200px] cursor-pointer"
             onClick={onChange}
@@ -32,18 +32,18 @@ const Results = (props: IResultsProps) => {
                     width: "100%",
                     maxWidth: 18,
                   }}
-                  url="/btn/PLUS.png"
+                  url="/btn/PLUS.svg"
                 />
               </div>
             </div>
           </button>
         </div>
-        <div className="mt-[-30px]">
+        <div className="mt-[-24px] md:flex-1">
           <div className="relative">
             <PureImage url={mintInfos?.image} />
           </div>
         </div>
-        <div>
+        <div className="md:flex-1">
           <div>
             <div className="pb-2 relative text-area-style">
               <div className="flex items-center gap-5 text-primary-color">

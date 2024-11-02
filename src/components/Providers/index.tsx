@@ -4,7 +4,8 @@ import { WagmiProvider, cookieToInitialState } from "wagmi";
 import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { config } from "@/lib/config";
+import { defaultWagmiConfig } from "@/lib/config";
+import { coinbaseWallet } from "wagmi/connectors";
 
 const queryClient = new QueryClient();
 
@@ -13,11 +14,15 @@ type Props = {
   cookie?: string | null;
 };
 
-export default function Providers({ children, cookie }: Props) {
-  const initialState = cookieToInitialState(config, cookie);
+export default function Providers({ children, cookie }: Readonly<Props>) {
+  const initialState = cookieToInitialState(defaultWagmiConfig, cookie);
+
+  if (coinbaseWallet && "preference" in coinbaseWallet) {
+    (coinbaseWallet as any).preference = "smartWalletOnly";
+  }
 
   return (
-    <WagmiProvider config={config} initialState={initialState}>
+    <WagmiProvider config={defaultWagmiConfig} initialState={initialState}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider
           theme={darkTheme({

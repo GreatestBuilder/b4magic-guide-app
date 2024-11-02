@@ -1,8 +1,6 @@
 "use client";
 
 import { Basenames } from "@/components/Presentations/Web3/BaseName";
-import { emojiAvatarForAddress } from "@/lib/emojiAvatarForAddress";
-import { middleEllipsis } from "@/lib/utils";
 import {
   useAccountModal,
   useChainModal,
@@ -14,9 +12,6 @@ import { PureImage } from "../Logos";
 
 export const ConnectBtn = () => {
   const { isConnecting, address, isConnected, chain } = useAccount();
-  const { color: backgroundColor, emoji } = emojiAvatarForAddress(
-    address ?? ""
-  );
 
   const { openConnectModal } = useConnectModal();
   const { openAccountModal } = useAccountModal();
@@ -83,12 +78,105 @@ export const ConnectBtn = () => {
 
   return (
     <div className="flex items-center justify-between">
-      <div
+      <button
         className="flex justify-center items-center py-2 px-4 border border-neutral-700 bg-neutral-800/30 rounded-xl  gap-x-2 cursor-pointer"
         onClick={async () => openAccountModal?.()}
       >
         <Basenames address={address} />
-      </div>
+      </button>
     </div>
   );
 };
+
+// import { ConnectButton } from "@rainbow-me/rainbowkit";
+
+// export const ConnectBtn = () => {
+//   return (
+//     <ConnectButton.Custom>
+//       {({
+//         account,
+//         chain,
+//         openAccountModal,
+//         openChainModal,
+//         openConnectModal,
+//         authenticationStatus,
+//         mounted,
+//       }) => {
+//         // Note: If your app doesn't use authentication, you
+//         // can remove all 'authenticationStatus' checks
+//         const ready = mounted && authenticationStatus !== "loading";
+//         const connected =
+//           ready &&
+//           account &&
+//           chain &&
+//           (!authenticationStatus || authenticationStatus === "authenticated");
+//         return (
+//           <div
+//             {...(!ready && {
+//               "aria-hidden": true,
+//               style: {
+//                 opacity: 0,
+//                 pointerEvents: "none",
+//                 userSelect: "none",
+//               },
+//             })}
+//           >
+//             {(() => {
+//               if (!connected) {
+//                 return (
+//                   <button onClick={openConnectModal} type="button">
+//                     Connect Wallet
+//                   </button>
+//                 );
+//               }
+//               if (chain.unsupported) {
+//                 return (
+//                   <button onClick={openChainModal} type="button">
+//                     Wrong network
+//                   </button>
+//                 );
+//               }
+//               return (
+//                 <div style={{ display: "flex", gap: 12 }}>
+//                   <button
+//                     onClick={openChainModal}
+//                     style={{ display: "flex", alignItems: "center" }}
+//                     type="button"
+//                   >
+//                     {chain.hasIcon && (
+//                       <div
+//                         style={{
+//                           background: chain.iconBackground,
+//                           width: 12,
+//                           height: 12,
+//                           borderRadius: 999,
+//                           overflow: "hidden",
+//                           marginRight: 4,
+//                         }}
+//                       >
+//                         {chain.iconUrl && (
+//                           <img
+//                             alt={chain.name ?? "Chain icon"}
+//                             src={chain.iconUrl}
+//                             style={{ width: 12, height: 12 }}
+//                           />
+//                         )}
+//                       </div>
+//                     )}
+//                     {chain.name}
+//                   </button>
+//                   <button onClick={openAccountModal} type="button">
+//                     {account.displayName}
+//                     {account.displayBalance
+//                       ? ` (${account.displayBalance})`
+//                       : ""}
+//                   </button>
+//                 </div>
+//               );
+//             })()}
+//           </div>
+//         );
+//       }}
+//     </ConnectButton.Custom>
+//   );
+// };

@@ -8,4 +8,5 @@ export interface NftMetadata {
   description: string;
   image: string;
   name: string;
+  id?: string;
 }

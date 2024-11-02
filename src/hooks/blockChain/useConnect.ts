@@ -1,62 +1,37 @@
-import { ContractAddress } from "@/lib/config";
+import { ContractAddress, defaultWagmiConfig, mockResult } from "@/lib/config";
 import { turnRandomNumberFromRange } from "@/lib/utils";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { ethers } from "ethers";
+import { readContract, writeContract } from "@wagmi/core";
 import { useState } from "react";
-import {
-  useAccount,
-  useChainId,
-  useClient,
-  useSwitchChain,
-  useWalletClient,
-} from "wagmi";
+import { useAccount } from "wagmi";
 import QUOTE_LIST from "../../../data/quote_ipfs_mapping.json";
 import abi from "../../components/ABI/abi.json";
-import { baseSepolia } from "viem/chains";
 
 const defaultUrl =
   "https://ipfs.io/ipfs/QmPw1ogeGvyrXRQNK8WD4WNTxsuwjvVsaKkmHP6HWQzrZm";
 
 const useConnectContract = () => {
-  const { isConnected, chain } = useAccount();
+  const { isConnected, chain, address } = useAccount();
   const { openConnectModal } = useConnectModal();
   const [isMinting, setIsMinting] = useState<null | boolean>(null);
 
-  const { switchChain } = useSwitchChain();
-
   const onMintNft = async () => {
     try {
-      console.log("====================================");
-      console.log({ chain }, { baseSepolia });
-      console.log("====================================");
       if (!isConnected) {
         openConnectModal?.();
         return;
       }
-      if (baseSepolia.id !== chain?.id) {
-        switchChain({
-          chainId: baseSepolia.id,
-        });
-        console.log("====================================");
-        console.log("switch chain");
-        console.log("====================================");
-      }
-      const { ethereum } = window;
 
-      if (ethereum) {
+      if (ContractAddress) {
         setIsMinting(true);
-        const provider = new ethers.BrowserProvider(ethereum);
-        const signer = await provider.getSigner();
-        const nftContract = new ethers.Contract(ContractAddress, abi, signer);
+        const nftTx = await writeContract(defaultWagmiConfig, {
+          abi,
+          address: ContractAddress as any,
+          functionName: "mintNFT",
+          args: ["QmUN9EQoBhmB8h3Eso613CupwJ3fiVvEzqmHBLNQm4ZArM"],
+        });
 
-        let nftTx = await nftContract.mintNFT(
-          "QmUN9EQoBhmB8h3Eso613CupwJ3fiVvEzqmHBLNQm4ZArM"
-        );
-        console.log("Mining....", nftTx.hash);
-
-        let tx = await nftTx.wait();
-        console.log("Mined!", tx);
-        if (tx) {
+        if (nftTx) {
           const randomIndex = turnRandomNumberFromRange(
             1,
             177
@@ -64,32 +39,31 @@ const useConnectContract = () => {
           const getIpfsUrl = QUOTE_LIST[randomIndex];
           return getQuoteContent(getIpfsUrl);
         }
-      } else {
-        console.log("Ethereum object doesn't exist!");
-        return null;
+        return mockResult;
       }
+      return mockResult;
     } catch (error) {
       console.log("Error minting character", error);
       setIsMinting(false);
-      return null;
+      return mockResult;
     }
   };
 
-  const getNFTbyOwner = async (address: string) => {
+  const getNFTbyOwner = async (_address: string) => {
     try {
       if (!isConnected) {
         openConnectModal?.();
         return;
       }
-
-      const { ethereum } = window;
-      if (ethereum) {
-        const provider = new ethers.BrowserProvider(ethereum);
-        const nftContract = new ethers.Contract(ContractAddress, abi, provider);
-        const result = await nftContract.getNFTsByOwner(address);
+      if (_address) {
+        const result = await readContract(defaultWagmiConfig, {
+          abi,
+          address: _address as any,
+          functionName: "getNFTsByOwner",
+          args: [address],
+          account: address,
+        });
         return bigIntToString(result);
-      } else {
-        console.log("Ethereum object doesn't exist!");
       }
     } catch (error) {
       console.log(error);
@@ -98,16 +72,14 @@ const useConnectContract = () => {
 
   const getMintedNFT = async (tokenId: string) => {
     try {
-      const { ethereum } = window;
-
-      if (ethereum) {
-        const provider = new ethers.BrowserProvider(ethereum);
-        const signer = await provider.getSigner();
-        const nftContract = new ethers.Contract(ContractAddress, abi, signer);
-        const tokenUri = await nftContract.tokenURI(tokenId);
-        return getQuoteContent(tokenUri);
-      } else {
-        console.log("Ethereum object doesn't exist!");
+      const getMintedNFTResult = await readContract(defaultWagmiConfig, {
+        abi,
+        address: ContractAddress as any,
+        functionName: "tokenURI",
+        args: [tokenId],
+      });
+      if (getMintedNFTResult) {
+        return getQuoteContent(getMintedNFTResult as string);
       }
     } catch (error) {
       console.log(error);
@@ -119,21 +91,16 @@ const useConnectContract = () => {
       return defaultUrl;
     }
     try {
-      let response = await fetch(quoteUrl, { cache: "no-store" });
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
-      let meta = response.json();
-      console.log("====================================");
-      console.log({ meta });
-      console.log("====================================");
+      let response = await fetch(quoteUrl);
       setIsMinting(false);
-      return meta;
+      if (response.ok) {
+        return response.json();
+      }
+      return mockResult;
     } catch (error) {
       setIsMinting(false);
       console.log(error);
-      getQuoteContent(defaultUrl);
-      return defaultUrl;
+      return mockResult;
     }
   };
 

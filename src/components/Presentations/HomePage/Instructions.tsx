@@ -33,9 +33,6 @@ const Instruction = (props: IInstructionProps) => {
       return;
     }
     const quoteInfos = await onMintNft();
-    console.log("====================================");
-    console.log({ quoteInfos });
-    console.log("====================================");
     if (quoteInfos?.name || quoteInfos?.description) {
       onUpdate(quoteInfos);
     }

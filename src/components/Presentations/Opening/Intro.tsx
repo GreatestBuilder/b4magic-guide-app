@@ -17,12 +17,12 @@ const Intro = (props: IIntroProps) => {
     <div className="container h-full relative">
       <div className="h-full flex flex-col justify-end">
         <div className="py-8">
-          <div className="flex gap-16 items-end	">
+          <div className="flex gap-16 items-end	flex-wrap  justify-center">
             <div className="text-intro text-center text-primary-color flex-[3]">
               <div className="typewriter">
                 <div className="text-typing">Nothing is random,</div>
               </div>
-              <div className="typewriter text-right">
+              <div className="typewriter xl:text-right text-center">
                 <div className="text-typing">everything is for granted.</div>
               </div>
             </div>
